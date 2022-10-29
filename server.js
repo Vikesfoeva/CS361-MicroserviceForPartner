@@ -1,3 +1,6 @@
+// CS 361 Microservice for Partners Project
+// Brandon Lenz
+
 const express = require('express');
 const app = express();
 
@@ -36,7 +39,7 @@ app.post('/patients', async (req, res) => {
   // Error check
   if (searchParams.length === 0) {
     res.status(400);
-    return res.send({'Error' : 'Please provide LastName, FirstName, DOB, or the MemberID'});
+    return res.send({'Error' : 'Please provide LastName, FirstName, DOB (yyyy-MM-dd), or the MemberID'});
   }
 
   // Query the database
@@ -53,8 +56,16 @@ app.post('/patients', async (req, res) => {
     // Check each query param for this patient
     for (let j=0; j < searchParams.length; j++) {
       const thisKey = Object.keys(searchParams[j])[0];
+      
       // If we find a match add to response
-      if (thisPatient[thisKey] === searchParams[j][thisKey]) {
+      if (thisKey === 'DOB') {
+        const thisDate = searchParams[j][thisKey];
+        const patDate = thisPatient['DOB'].toISOString().substring(0,10);
+        if (thisDate === patDate) {
+          matchedParams = matchedParams + 1;
+        }
+      }
+      else if (thisPatient[thisKey] === searchParams[j][thisKey]) {
         matchedParams = matchedParams + 1;
       } else {
         // Make this param very negative so we don't include this result
