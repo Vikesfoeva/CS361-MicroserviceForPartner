@@ -20,46 +20,59 @@ const client = new MongoClient(uri);
 app.post('/patients', async (req, res) => {
   // Capture search criteria
   const searchParams = [];
-  if (req.body.lastName !== undefined) {
-    searchParams.push({"LastName" : req.body.lastName});
+  if (req.body.LastName !== undefined) {
+    searchParams.push({"LastName" : req.body.LastName});
   }
-  if (req.body.firstName !== undefined) {
-    searchParams.push({"FirstName" : req.body.firstName});
+  if (req.body.FirstName !== undefined) {
+    searchParams.push({"FirstName" : req.body.FirstName});
   }
-  if (req.body.dateOfBirth !== undefined) {
-    searchParams.push({"DOB" : req.body.dateOfBirth});
+  if (req.body.DOB !== undefined) {
+    searchParams.push({"DOB" : req.body.DOB});
   }
-  if (req.body.memberId !== undefined) {
-    searchParams.push({"MemberID" : req.body.memberId});
+  if (req.body.MemberID !== undefined) {
+    searchParams.push({"MemberID" : req.body.MemberID});
   }
 
   // Error check
   if (searchParams.length === 0) {
     res.status(400);
-    return res.send({'Error' : 'Please provide last name, first name, date of birth, or the member ID'});
+    return res.send({'Error' : 'Please provide LastName, FirstName, DOB, or the MemberID'});
   }
 
   // Query the database
   const patients = await client.db('Mini-EMR').collection('Patients').find().toArray();
-  const searchResults = [];
+  const searchResults = {
+    matchCount: 0,
+    results: []
+  };
 
   // Parse the results
   for (let i=0; i < patients.length; i++) {
     const thisPatient = patients[i];
-    let isMatch = false;
-
+    let matchedParams = 0;
+    // Check each query param for this patient
     for (let j=0; j < searchParams.length; j++) {
       const thisKey = Object.keys(searchParams[j])[0];
+      // If we find a match add to response
       if (thisPatient[thisKey] === searchParams[j][thisKey]) {
-        isMatch = true;
-        break;
+        matchedParams = matchedParams + 1;
+      } else {
+        // Make this param very negative so we don't include this result
+        matchedParams = matchedParams - 9999;
       }
     }
 
-    if (isMatch) {
-      searchResults.push(thisPatient);
+    if (matchedParams > searchResults['matchCount']) {
+      searchResults['matchCount'] = matchedParams;
+      searchResults['results'] = [thisPatient];
+
+    } else if (matchedParams === searchResults['matchCount'] && matchedParams > 0) {
+      const thisList = searchResults['results']
+      thisList.push(thisPatient);
+      searchResults['results'] = thisList;
     }
+
   };
 
-  return res.send(searchResults);
+  return res.send(searchResults['results']);
 });
