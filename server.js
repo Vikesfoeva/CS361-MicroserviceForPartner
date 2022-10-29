@@ -18,39 +18,45 @@ const uri = "mongodb+srv://brandonlenz:15XWJbReF3eXV0KY@cluster0.g2wvu5k.mongodb
 const client = new MongoClient(uri);
 
 app.post('/patients', async (req, res) => {
-  const lastName = req.body.lastName;
-  const firstName = req.body.firstName;
-  const dateOfBirth = req.body.dateOfBirth;
-  const memberId = req.body.memberId;
+  // Capture search criteria
+  const searchParams = [];
+  if (req.body.lastName !== undefined) {
+    searchParams.push({"LastName" : req.body.lastName});
+  }
+  if (req.body.firstName !== undefined) {
+    searchParams.push({"FirstName" : req.body.firstName});
+  }
+  if (req.body.dateOfBirth !== undefined) {
+    searchParams.push({"DOB" : req.body.dateOfBirth});
+  }
+  if (req.body.memberId !== undefined) {
+    searchParams.push({"MemberID" : req.body.memberId});
+  }
 
-  if (lastName === undefined && firstName === undefined && dateOfBirth === undefined && memberId === undefined) {
+  // Error check
+  if (searchParams.length === 0) {
     res.status(400);
     return res.send({'Error' : 'Please provide last name, first name, date of birth, or the member ID'});
   }
+
+  // Query the database
   const patients = await client.db('Mini-EMR').collection('Patients').find().toArray();
   const searchResults = [];
 
+  // Parse the results
   for (let i=0; i < patients.length; i++) {
     const thisPatient = patients[i];
-    let [lastNameMatch, firstNameMatch, dateOfBirthMatch, memberIdMatch] = [false, false, false, false];
+    let isMatch = false;
 
-    if (lastName !== undefined) {
-      lastNameMatch = thisPatient['LastName'] === lastName;
+    for (let j=0; j < searchParams.length; j++) {
+      const thisKey = Object.keys(searchParams[j])[0];
+      if (thisPatient[thisKey] === searchParams[j][thisKey]) {
+        isMatch = true;
+        break;
+      }
     }
 
-    if (firstName !== undefined) {
-      firstNameMatch = thisPatient['FirstName'] === firstName;
-    }
-
-    if (dateOfBirth !== undefined) {
-      dateOfBirthMatch = thisPatient['DOB'] === dateOfBirth;
-    }
-
-    if (memberId !== undefined) {
-      memberIdMatch = thisPatient['MemberID'] === memberId;
-    }
-
-    if (lastNameMatch || firstNameMatch || dateOfBirthMatch || memberIdMatch) {
+    if (isMatch) {
       searchResults.push(thisPatient);
     }
   };
