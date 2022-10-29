@@ -20,6 +20,14 @@ const { MongoClient } = require("mongodb");
 const uri = "mongodb+srv://brandonlenz:15XWJbReF3eXV0KY@cluster0.g2wvu5k.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 
+// Allow cross origin
+app.use(function (req, res, next) {
+  const thisHost = req.get('host');
+  res.header("Access-Control-Allow-Origin", "http://" + thisHost + "/");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.post('/patients', async (req, res) => {
   // Capture search criteria
   const searchParams = [];
