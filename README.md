@@ -1,4 +1,7 @@
-# CS361 Microservice For Partner's Project
+# CS361 Patient Search Microservice For Partner's Project
+Goal
+Searches an a MongoDB collection for patient(s) given the user search criteria.
+<br><br>
 Logic<br>
 FirstName & LastName are both case agnostic and searched based on includes such that a search for jO could return the name John.  The MemberID field is also case agnostic and also searches for substrings.  The DOB must be exact.   If a patient matches on 1 search criteria, but not on the 2nd then they will be excluded.  A list of all patients who aare valid options for all search criteria is who is returned.
 <br><br>
