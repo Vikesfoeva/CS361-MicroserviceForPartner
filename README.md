@@ -1,5 +1,5 @@
 # CS361 Patient Search Microservice For Partner's Project
-Goal
+Goal<br>
 Searches an a MongoDB collection for patient(s) given the user search criteria.
 <br><br>
 Logic<br>
