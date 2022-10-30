@@ -1,5 +1,4 @@
 # CS361 Microservice For Partner's Project
-<br><br>
 Full Documentation <br>
 https://docs.google.com/document/d/1-2ZHJF13ApBrIDLMhRwlUFmMF-vsD6RfYZenBaezQm8/edit#
 <br><br>
