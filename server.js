@@ -73,7 +73,7 @@ app.post('/patients', async (req, res) => {
           matchedParams = matchedParams + 1;
         }
       }
-      else if (thisPatient[thisKey] === searchParams[j][thisKey]) {
+      else if (thisPatient[thisKey].toLowerCase().includes(searchParams[j][thisKey].toLowerCase())) {
         matchedParams = matchedParams + 1;
       } else {
         // Make this param very negative so we don't include this result
