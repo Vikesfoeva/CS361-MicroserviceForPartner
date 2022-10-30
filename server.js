@@ -1,5 +1,17 @@
 // CS 361 Microservice for Partners Project
 // Brandon Lenz
+//Goal
+// Searches an a MongoDB collection for patient(s) given the user search criteria.
+
+// Logic
+// FirstName & LastName are both case agnostic and searched based on includes such
+// that a search for jO could return the name John. The MemberID field is also case 
+// agnostic and also searches for substrings. The DOB must be exact. If a patient matches 
+// on 1 search criteria, but not on the 2nd then they will be excluded. A list of all
+// patients who aare valid options for all search criteria is who is returned.
+
+// URL = https://lenzb-cs361-microservice.ue.r.appspot.com
+// Hosted on Google Cloud Platform
 
 const express = require('express');
 const app = express();
