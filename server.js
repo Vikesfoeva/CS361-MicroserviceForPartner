@@ -81,12 +81,13 @@ app.post('/patients', async (req, res) => {
       // If we find a match add to response
       if (thisKey === 'DOB') {
         const thisDate = searchParams[j][thisKey];
-        const patDate = thisPatient['DOB'].toISOString().substring(0,10);
-        if (thisDate === patDate) {
+        const patDate = new Date(thisPatient['DOB']);
+        const checkDate = patDate.toISOString().substring(0,10);
+        if (thisDate === checkDate) {
           matchedParams = matchedParams + 1;
         }
       }
-      else if (thisPatient[thisKey].toLowerCase().includes(searchParams[j][thisKey].toLowerCase())) {
+      else if (String(thisPatient[thisKey]).toLowerCase().includes(searchParams[j][thisKey].toLowerCase())) {
         matchedParams = matchedParams + 1;
       } else {
         // Make this param very negative so we don't include this result
